@@ -1,6 +1,4 @@
-def compilar(assembler):
-
-    instructionSet = {
+instructionSet = {
         "LOAD" : {
             "registro" : {
                 "R0" : {
@@ -72,14 +70,14 @@ def compilar(assembler):
             "R3" : "CD"
         },
         "ADD" : {
-            "R0, R1" : "D1",
-            "R0, R2" : "D2",
-            "R0, R3" : "D3"
+            "R0 R1" : "D1",
+            "R0 R2" : "D2",
+            "R0 R3" : "D3"
         },
         "ADDC" : {
-            "R0, R1" : "1D",
-            "R0, R2" : "2D",
-            "R0, R3" : "3D"
+            "R0 R1" : "1D",
+            "R0 R2" : "2D",
+            "R0 R3" : "3D"
         },
         "NOT" : {
             "R0" : "E0",
@@ -128,21 +126,21 @@ def compilar(assembler):
         "RETI" : "65",
         
         "AND" : {
-            "R0, R1" : "E4",
-            "R0, R2" : "E5",
-            "R0, R3" : "E6"
+            "R0 R1" : "E4",
+            "R0 R2" : "E5",
+            "R0 R3" : "E6"
         },
 
         "OR" : {
-            "R0, R1" : "E7",
-            "R0, R2" : "E8",
-            "R0, R3" : "E9"
+            "R0 R1" : "E7",
+            "R0 R2" : "E8",
+            "R0 R3" : "E9"
         },
 
         "XNOR" : {
-            "R0, R1" : "7E",
-            "R0, R2" : "8E",
-            "R0, R3" : "9E"
+            "R0 R1" : "7E",
+            "R0 R2" : "8E",
+            "R0 R3" : "9E"
         },
 
         "SHFTL" : {
@@ -160,14 +158,36 @@ def compilar(assembler):
         }
     }
 
+
+codigo = "LOAD R0, 08\nLOAD R1, 08\nADD R0, R1\nSTORE R0, [10]"
+
+
+def compilar(assembler):
     codigo = assembler.split("\n")
-    i = 0
-    for instruccion in codigo:
-        ins = instruccion.replace(",","").split(" ")
-        if len(ins) > 2 :
-            print(instructionSet[ins[0]][direccionamiento(ins[2])][ins[1]] + " " + ins[2])
+    for i in codigo:
+        #remueve la coma y convierte la instrucción en un array iterable
+        #donde el primer elemento es la instrucción en sí y el resto sus argumentos
+        instruccion = i.replace(",","").split(" ")
+        print(compilarInstruccion(instruccion))
+
+
+
+def compilarInstruccion(instruccion) :
+    try:
+        if len(instruccion) == 3 :
+            if (instruccion[0] == "LOAD" or instruccion[0] == "STORE") :
+                return instructionSet[instruccion[0]][direccionamiento(instruccion[2])][instruccion[1]] + " " + sanitizarArgumento(instruccion[2])
+            else :
+                return instructionSet[instruccion[0]][instruccion[1] + " " + instruccion[2]]
         else :
-            print(instructionSet[ins[0]][ins[1]])
+            return instructionSet[instruccion[0]] + " " + sanitizarArgumento(instruccion[2])
+    except:
+        print ("error: instrucción inválida")
+
+def sanitizarArgumento(argumento) :
+    replacements = str.maketrans({"[" : "","]" :""})
+    return argumento.translate(replacements)
+
 
 def direccionamiento(argumento) :
     if "[[" in argumento:
