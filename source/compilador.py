@@ -163,4 +163,18 @@ def compilar(assembler):
     codigo = assembler.split("\n")
     i = 0
     for instruccion in codigo:
-        print(instruccion.split(" "))
+        ins = instruccion.replace(",","").split(" ")
+        if len(ins) > 2 :
+            print(instructionSet[ins[0]][direccionamiento(ins[2])][ins[1]] + " " + ins[2])
+        else :
+            print(instructionSet[ins[0]][ins[1]])
+
+def direccionamiento(argumento) :
+    if "[[" in argumento:
+        return "indirecto"
+    elif "[" in argumento:
+        return "directo"
+    elif "R" in argumento:
+        return "registro"
+    else: 
+        return "inmediato"
