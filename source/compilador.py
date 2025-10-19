@@ -1,44 +1,44 @@
 instructionSet = {
         "LOAD" : {
-            "registro" : {
-                "R0" : {
+            "R0" : {
+                "inmediato" : "A0",
+                "directo" : "B0",
+                "indirecto" : "0B",
+                "registro" : {
                     "R1" : "01",
                     "R2" : "02",
                     "R3" : "03"
-                },
-                "R1" : {
+                }
+            },
+            "R1" : {
+                "inmediato" : "A1",
+                "directo" : "B1",
+                "indirecto" : "1B",
+                "registro" : {
                     "R0" : "10",
                     "R2" : "12",
                     "R3" : "13"
-                },
-                "R2" : {
+                }
+            },
+            "R2" : {
+                "inmediato" : "A2",
+                "directo" : "B2",
+                "indirecto" : "02",
+                "registro" : {
                     "R0" : "20",
                     "R1" : "21",
                     "R3" : "23"
-                },
-                "R3" : {
+                }
+            },
+            "R3" : {
+                "inmediato" : "A3",
+                "directo" : "B3",
+                "indirecto" : "3B",
+                "registro" : {
                     "R0" : "30",
                     "R1" : "31",
                     "R2" : "32"
-                },
-            },
-            "inmediato" : {
-                "R0" : "A0",
-                "R1" : "A1",
-                "R2" : "A2",
-                "R3" : "A3"
-            },
-            "directo" : {
-                "R0" : "B0",
-                "R1" : "B1",
-                "R2" : "B2",
-                "R3" : "B3"
-            },
-            "indirecto" : {
-                "R0" : "R0",
-                "R1" : "R1",
-                "R2" : "R2",
-                "R3" : "R3"
+                }
             },
             "SP" : "A4"
         },
@@ -50,17 +50,21 @@ instructionSet = {
         },
 
         "STORE" : {
-            "directo" : {
-                "R0" : "C0",
-                "R1" : "C1",
-                "R2" : "C2",
-                "R3" : "C3"
+            "R0" : {
+                "directo" : "C0",
+                "indirecto" : "0C"
             },
-            "indirecto" : {
-                "R0" : "0C",
-                "R1" : "1C",
-                "R2" : "2C",
-                "R3" : "3C"
+            "R1" : {
+                "directo" : "C1",
+                "indirecto" : "1C"
+            },
+            "R2" : {
+                "directo" : "C2",
+                "indirecto" : "2C"
+            },
+            "R3" : {
+                "directo" : "C3",
+                "indirecto" : "3C"
             }
         },
         "OUT" : {
@@ -161,12 +165,12 @@ instructionSet = {
 
 codigo = "LOAD R0, 08\nLOAD R1, 08\nADD R0, R1\nSTORE R0, [10]"
 
-
 def compilar(assembler):
     codigo = assembler.split("\n")
     for i in codigo:
         #remueve la coma y convierte la instrucción en un array iterable
         #donde el primer elemento es la instrucción en sí y el resto sus argumentos
+        
         if i[:2] != "//":
             instruccion = i.replace(",","").split(" ")
             print(compilarInstruccion(instruccion))
@@ -175,13 +179,16 @@ def compilarInstruccion(instruccion) :
     try:
         if len(instruccion) == 3 :
             if (instruccion[0] == "LOAD" or instruccion[0] == "STORE") :
-                return instructionSet[instruccion[0]][direccionamiento(instruccion[2])][instruccion[1]] + " " + sanitizarArgumento(instruccion[2])
+                if (direccionamiento(instruccion[2]) == "registro"):
+                    return instructionSet[instruccion[0]][instruccion[1]][direccionamiento(instruccion[2])][instruccion[2]]
+                else:
+                    return instructionSet[instruccion[0]][instruccion[1]][direccionamiento(instruccion[2])] + " " + sanitizarArgumento(instruccion[2])
             else :
                 return instructionSet[instruccion[0]][instruccion[1] + " " + instruccion[2]]
         else :
-            return instructionSet[instruccion[0]] + " " + sanitizarArgumento(instruccion[2])
+            return instructionSet[instruccion[0]] + " " + instruccion[1]
     except:
-        return "error: instrucción inválida"
+        raise Exception("error: instrucción inválida")
 
 def sanitizarArgumento(argumento) :
     replacements = str.maketrans({"[" : "","]" :""})
