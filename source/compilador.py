@@ -2,10 +2,46 @@ def compilar(assembler):
 
     instructionSet = {
         "LOAD" : {
-            "R0" : "A0",
-            "R1" : "A1",
-            "R2" : "A2",
-            "R3" : "A3",
+            "registro" : {
+                "R0" : {
+                    "R1" : "01",
+                    "R2" : "02",
+                    "R3" : "03"
+                },
+                "R1" : {
+                    "R0" : "10",
+                    "R2" : "12",
+                    "R3" : "13"
+                },
+                "R2" : {
+                    "R0" : "20",
+                    "R1" : "21",
+                    "R3" : "23"
+                },
+                "R3" : {
+                    "R0" : "30",
+                    "R1" : "31",
+                    "R2" : "32"
+                },
+            },
+            "inmediato" : {
+                "R0" : "A0",
+                "R1" : "A1",
+                "R2" : "A2",
+                "R3" : "A3"
+            },
+            "directo" : {
+                "R0" : "B0",
+                "R1" : "B1",
+                "R2" : "B2",
+                "R3" : "B3"
+            },
+            "indirecto" : {
+                "R0" : "R0",
+                "R1" : "R1",
+                "R2" : "R2",
+                "R3" : "R3"
+            },
             "SP" : "A4"
         },
         "IN" : {
@@ -14,11 +50,20 @@ def compilar(assembler):
             "R2" : "BC",
             "R3" : "BD"
         },
+
         "STORE" : {
-            "R0" : "C0",
-            "R1" : "C1",
-            "R2" : "C2",
-            "R3" : "C3"
+            "directo" : {
+                "R0" : "C0",
+                "R1" : "C1",
+                "R2" : "C2",
+                "R3" : "C3"
+            },
+            "indirecto" : {
+                "R0" : "0C",
+                "R1" : "1C",
+                "R2" : "2C",
+                "R3" : "3C"
+            }
         },
         "OUT" : {
             "R0" : "CA",
@@ -107,7 +152,7 @@ def compilar(assembler):
             "R3" : "ED"
         },
 
-        "SHFTL" : {
+        "SHFTR" : {
             "R0" : "AE",
             "R1" : "BE",
             "R2" : "CE",
@@ -116,4 +161,6 @@ def compilar(assembler):
     }
 
     codigo = assembler.split("\n")
-    print(codigo)
+    i = 0
+    for instruccion in codigo:
+        print(instruccion.split(" "))
