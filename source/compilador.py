@@ -167,10 +167,9 @@ def compilar(assembler):
     for i in codigo:
         #remueve la coma y convierte la instrucción en un array iterable
         #donde el primer elemento es la instrucción en sí y el resto sus argumentos
-        instruccion = i.replace(",","").split(" ")
-        print(compilarInstruccion(instruccion))
-
-
+        if i[:2] != "//":
+            instruccion = i.replace(",","").split(" ")
+            print(compilarInstruccion(instruccion))
 
 def compilarInstruccion(instruccion) :
     try:
@@ -182,7 +181,7 @@ def compilarInstruccion(instruccion) :
         else :
             return instructionSet[instruccion[0]] + " " + sanitizarArgumento(instruccion[2])
     except:
-        print ("error: instrucción inválida")
+        return "error: instrucción inválida"
 
 def sanitizarArgumento(argumento) :
     replacements = str.maketrans({"[" : "","]" :""})
